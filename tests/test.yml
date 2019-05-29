@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - role: ../ansible-role-github-release
+      vars:
+        ghr_org_name: "digitalocean"
+        ghr_app_name: "doctl"
+        ghr_app_version: "1.18.0"

@@ -1,0 +1,14 @@
+---
+# ghr_org_name: "my-org"
+# ghr_app_name: "my-repo"
+
+ghr_app_version: "0.0.0"
+
+ghr_app_binary_dest: "/opt/{{ ghr_app_name }}"
+
+ghr_app_cleanup_after: false
+
+ghr_app_configure_system_path: true
+ghr_app_system_path_prepend: false
+
+ghr_app_tmp_dir: "/tmp"
