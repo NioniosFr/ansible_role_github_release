@@ -1,6 +1,8 @@
 ---
 dependencies: []
 
+allow_duplicates: false
+
 galaxy_info:
   role_name: github_release
   author: NioniosFr

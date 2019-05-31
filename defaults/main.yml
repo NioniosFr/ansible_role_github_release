@@ -12,3 +12,8 @@ ghr_app_configure_system_path: true
 ghr_app_system_path_prepend: false
 
 ghr_app_tmp_dir: "/tmp"
+
+ghr_app_releases_endpoint: "v{{ ghr_app_version }}"
+
+ghr_app_archive: "{{ ghr_app_name }}-{{ ghr_app_version }}-linux-amd64.tar.gz"
+ghr_app_is_binary: false

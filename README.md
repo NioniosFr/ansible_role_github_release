@@ -37,6 +37,9 @@ ghr_app_configure_system_path: true # Whether the `ghr_app_binary_dest` director
 ghr_app_system_path_prepend: false # Whether to append or prepend the `ghr_app_binary_dest` directory into the `PATH`, IF (ghr_app_configure_system_path is True).
 
 ghr_app_tmp_dir: # Temporary folder to store the downloaded archive
+
+ghr_app_releases_url: # The URL of github releases.
+ghr_app_archive: # The name of the archive.
 ```
 
 Dependencies
@@ -47,22 +50,34 @@ None
 Example Playbook
 ----------------
 
+Running the role multiple times will lead to variable merge issues.
+
+Recommended usage is to run one role per host execution.
+
 ```yaml
     - hosts: localhost
       roles:
-        - role: nioniosfr.ghr_app
+        - role: nioniosfr.github_release
           vars:
             ghr_org_name: "digitalocean"
             ghr_app_name: "doctl"
             ghr_app_version: "1.18.0"
-
-        - role: nioniosfr.ghr_app
-          vars:
-            ghr_app_name: "digitalocean"
-            ghr_app_version: "1.18.0" # Use a specific version
             ghr_app_tmp_dir: "/mnt/nfs_share/downloads" # Store the downloaded archive in a more persistent path than '/tmp'
 
-        - role: nioniosfr.ghr_app
+    - hosts: localhost
+      roles:
+        - role: nioniosfr.github_release
+          vars:
+            ghr_org_name: "stedolan"
+            ghr_app_name: "jq"
+            ghr_app_version: "1.6"
+            ghr_app_releases_endpoint: "{{ ghr_app_name }}-{{ ghr_app_version }}"
+            ghr_app_archive: "{{ ghr_app_name }}-{{ ghr_app_version }}.tar.gz"
+            ghr_app_is_binary: true
+
+    - hosts: localhost
+      roles:
+        - role: nioniosfr.github_release
           vars:
             ghr_org_name: "digitalocean"
             ghr_app_name: "doctl"

@@ -4,6 +4,18 @@
   roles:
     - role: ../ansible-role-github-release
       vars:
+        ghr_org_name: "stedolan"
+        ghr_app_name: "jq"
+        ghr_app_version: "1.6"
+        ghr_app_releases_endpoint: "{{ ghr_app_name }}-{{ ghr_app_version }}"
+        ghr_app_archive: "{{ ghr_app_name }}-linux64"
+        ghr_app_is_binary: true
+
+- hosts: localhost
+  remote_user: root
+  roles:
+    - role: ../ansible-role-github-release
+      vars:
         ghr_org_name: "digitalocean"
         ghr_app_name: "doctl"
         ghr_app_version: "1.18.0"

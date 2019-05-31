@@ -1,59 +1,68 @@
 ---
 - name: Fail early if we do not support the current environment
   fail:
-        msg: "Only 'x86_64' architectures are supported for now."
+    msg: "Only 'x86_64' architectures are supported for now."
   when: ansible_architecture != 'x86_64'
 
 - name: Fail early if we miss variables
   fail:
-        msg: "You need to specify (at least) the variable: `ghr_org_name`"
+    msg: "You need to specify (at least) the variable: `ghr_org_name`"
   when: ghr_org_name is undefined
 
 - name: Fail early if we miss variables
   fail:
-        msg: "You need to specify (at least) the variable: `ghr_app_name`"
+    msg: "You need to specify (at least) the variable: `ghr_app_name`"
   when: ghr_app_name is undefined
-
-- name: Download release without checksum
-  get_url:
-        url: "{{ ghr_app_downloadable_url }}"
-        dest: "{{ ghr_app_tmp_dir }}/{{ ghr_app_archive }}"
-        mode: 0644
 
 - name: Make directory
   file:
-        path: "{{ ghr_app_binary_dest }}"
-        state: directory
-        mode: 0755
+    path: "{{ ghr_app_binary_dest }}"
+    state: directory
+    mode: 0755
+
+- name: Download release without checksum
+  get_url:
+    url: "{{ ghr_app_downloadable_url }}"
+    dest: "{{ ghr_app_tmp_dir }}/{{ ghr_app_archive }}"
+    mode: 0644
 
 - name: Unpack the package in place
   unarchive:
-        src: "{{ ghr_app_tmp_dir }}/{{ ghr_app_archive }}"
-        remote_src: yes
-        dest: "{{ ghr_app_binary_dest }}"
-        mode: 0755
+    src: "{{ ghr_app_tmp_dir }}/{{ ghr_app_archive }}"
+    remote_src: yes
+    dest: "{{ ghr_app_binary_dest }}"
+    mode: 0755
+  when: not ghr_app_is_binary
+
+- name: Copy the binary in place
+  copy:
+    src: "{{ ghr_app_tmp_dir }}/{{ ghr_app_archive }}"
+    remote_src: yes
+    dest: "{{ ghr_app_binary_dest }}/{{ ghr_app_name }}"
+    mode: 0755
+  when: ghr_app_is_binary | bool
 
 - name: Add a profile.d PATH file for the release binary
   lineinfile:
-        path: /etc/profile.d/{{ ghr_app_name }}-path.sh
-        regexp: '^export\sPATH'
-        line: 'export PATH="{{ ghr_app_system_path_value }}"'
-        state: present
-        insertafter: EOF
-        create: yes
-        mode: 0644
+    path: /etc/profile.d/{{ ghr_app_name }}-path.sh
+    regexp: '^export\sPATH'
+    line: 'export PATH="{{ ghr_app_system_path_value }}"'
+    state: present
+    insertafter: EOF
+    create: yes
+    mode: 0644
   when: ghr_app_configure_system_path | bool
 
 - name: Remove any profile.d PATH file
   file:
-        state: absent
-        path: /etc/profile.d/{{ ghr_app_name }}-path.sh
+    state: absent
+    path: /etc/profile.d/{{ ghr_app_name }}-path.sh
   when: not ghr_app_configure_system_path and ghr_app_cleanup_after | bool
 
 - name: Cleanup the downloadable (non-idempotent)
   file:
-        state: absent
-        dest: "{{ item }}"
+    state: absent
+    dest: "{{ item }}"
   when: ghr_app_cleanup_after | bool
   loop:
-        - "{{ ghr_app_tmp_dir }}/{{ ghr_app_archive }}"
+    - "{{ ghr_app_tmp_dir }}/{{ ghr_app_archive }}"
