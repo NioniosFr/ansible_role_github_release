@@ -42,18 +42,18 @@
         insertafter: EOF
         create: yes
         mode: 0644
-  when: ghr_app_configure_system_path
+  when: ghr_app_configure_system_path | bool
 
 - name: Remove any profile.d PATH file
   file:
         state: absent
         path: /etc/profile.d/{{ ghr_app_name }}-path.sh
-  when: not ghr_app_configure_system_path and ghr_app_cleanup_after
+  when: not ghr_app_configure_system_path and ghr_app_cleanup_after | bool
 
 - name: Cleanup the downloadable (non-idempotent)
   file:
         state: absent
         dest: "{{ item }}"
-  when: ghr_app_cleanup_after
+  when: ghr_app_cleanup_after | bool
   loop:
         - "{{ ghr_app_tmp_dir }}/{{ ghr_app_archive }}"
