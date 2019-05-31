@@ -72,7 +72,7 @@ Recommended usage is to run one role per host execution.
             ghr_app_name: "jq"
             ghr_app_version: "1.6"
             ghr_app_releases_endpoint: "{{ ghr_app_name }}-{{ ghr_app_version }}"
-            ghr_app_archive: "{{ ghr_app_name }}-{{ ghr_app_version }}.tar.gz"
+            ghr_app_archive: "{{ ghr_app_name }}-linux64"
             ghr_app_is_binary: true
 
     - hosts: localhost
